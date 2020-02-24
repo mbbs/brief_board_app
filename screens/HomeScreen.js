@@ -10,7 +10,8 @@ import {
     View,
     Alert,
     TextInput,
-    ScrollView
+    ScrollView,
+    RefreshControl
 } from 'react-native';
 import {Linking} from 'react-native'
 import InAppBrowser from 'react-native-inappbrowser-reborn'
@@ -21,20 +22,30 @@ export default class HomeScreen extends Component {
         super(props);
 
         this.state = {
-            data: []
+            data: [],
+            refreshing: true
         };
     }
 
     componentDidMount() {
-        fetch("https://v6bliogsci.execute-api.us-east-1.amazonaws.com/default/brief_board_backend")
-            .then(res => res.json())
-            .then(data => this.setState({
-                data: data
-            }))
+        this.onRefresh();
     }
 
     async handlePressButtonAsync(url) {
         await WebBrowser.openBrowserAsync(url);
+    };
+
+    onRefresh = () => {
+        this.setState({
+            data: this.state.data,
+            refreshing: false
+        });
+        fetch("https://v6bliogsci.execute-api.us-east-1.amazonaws.com/default/brief_board_backend")
+            .then(res => res.json())
+            .then(data => this.setState({
+                data: data,
+                refreshing: false
+            }));
     };
 
     render() {
@@ -62,7 +73,9 @@ export default class HomeScreen extends Component {
             <View style={styles.container}>
                 <ScrollView
                     style={styles.container}
-                    contentContainerStyle={styles.contentContainer}>
+                    contentContainerStyle={styles.contentContainer}
+                    refreshControl={<RefreshControl refreshing={this.state.refreshing}
+                                                    onRefresh={this.onRefresh}/>}>
                     {payments}
                 </ScrollView>
 
