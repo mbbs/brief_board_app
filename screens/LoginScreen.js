@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import firebase from "firebase";
 import {AsyncStorage} from "react-native";
+import {screenTrack} from "../firebase_helper";
 
 const config = {
     iosClientId: '689009111160-0empa8quf6m2bm0s0006v5v6mcg431a6.apps.googleusercontent.com',
@@ -23,6 +24,7 @@ export default class LoginScreen extends Component {
     }
 
     componentDidMount() {
+        screenTrack("LoginScreen");
         this.loadUser();
     }
 

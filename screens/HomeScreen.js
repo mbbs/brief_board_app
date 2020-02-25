@@ -9,6 +9,7 @@ import {
     ScrollView,
     RefreshControl
 } from 'react-native';
+import {screenTrack} from "../firebase_helper";
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
+        screenTrack("HomeScreen");
         this.onRefresh();
     }
 
