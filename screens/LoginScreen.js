@@ -1,31 +1,16 @@
-// import { GoogleSignin, statusCodes, GoogleSigninButton } from '@react-native-community/google-signin';
 import * as Google from 'expo-google-app-auth';
 import React, {Component} from 'react';
-import {Button, StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
 import firebase from "firebase";
 import {AsyncStorage} from "react-native";
-import GoogleLogo from '../assets/images/google-signin.png';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyCopduK8cTcaM5e9iM5nz9qwZBA7LsV9Tc",
-    authDomain: "fresh-sanctuary-241303.firebaseapp.com",
-    databaseURL: "https://fresh-sanctuary-241303.firebaseio.com",
-    projectId: "fresh-sanctuary-241303",
-    storageBucket: "fresh-sanctuary-241303.appspot.com",
-    messagingSenderId: "689009111160",
-    appId: "1:689009111160:web:b7bb1cd917b29d60c03d8d",
-    measurementId: "G-P3DV4ER3P4"
-};
-if (!firebase.apps.length) {
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-}
-
 
 const config = {
     iosClientId: '689009111160-0empa8quf6m2bm0s0006v5v6mcg431a6.apps.googleusercontent.com',
     scopes: ["profile", "email"]
 };
+
+const userNameKey = '@VidBrief:userName';
+const photoUrlKey = '@VidBrief:photoUrl';
 
 export default class LoginScreen extends Component {
     constructor(props) {
@@ -42,8 +27,8 @@ export default class LoginScreen extends Component {
     }
 
     loadUser = async () => {
-        const userName = await AsyncStorage.getItem('@VidBrief:userName');
-        const photoUrl = await AsyncStorage.getItem('@VidBrief:photoUrl');
+        const userName = await AsyncStorage.getItem(userNameKey);
+        const photoUrl = await AsyncStorage.getItem(photoUrlKey);
         if (userName) {
             this.stateSetHelper(userName, photoUrl);
         }
@@ -62,8 +47,8 @@ export default class LoginScreen extends Component {
 
     stateSetHelper = async (name, photoUrl) => {
         try {
-            await AsyncStorage.setItem('@VidBrief:userName', name);
-            await AsyncStorage.setItem('@VidBrief:photoUrl', photoUrl);
+            await AsyncStorage.setItem(userNameKey, name);
+            await AsyncStorage.setItem(photoUrlKey, photoUrl);
             await this.setState({
                 isSignedIn: true,
                 name: name,
@@ -94,7 +79,7 @@ export default class LoginScreen extends Component {
                         console.error(error);
                     });
             } else {
-                that.stateSetHelper(googleUser.user.name, googleUser.user.photoUrl)
+                that.stateSetHelper(googleUser.user.name, googleUser.user.photoUrl);
                 console.log('User already signed-in Firebase.');
             }
         });
@@ -102,8 +87,8 @@ export default class LoginScreen extends Component {
 
     isUserEqual = (googleUser, firebaseUser) => {
         if (firebaseUser) {
-            var providerData = firebaseUser.providerData;
-            for (var i = 0; i < providerData.length; i++) {
+            const providerData = firebaseUser.providerData;
+            for (let i = 0; i < providerData.length; i++) {
                 if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
                     providerData[i].uid === googleUser.user.id) {
                     // We don't need to reauth the Firebase connection.
@@ -149,15 +134,15 @@ export default class LoginScreen extends Component {
                 <View
                     style={{
                         borderWidth: 1,
-                        borderColor:'#000',
+                        borderColor: '#000',
                         width: "80%",
-                        margin:20,
+                        margin: 20,
                     }}
                 />
-            <TouchableOpacity onPress={this.signIn} style={styles.googlePlusStyle}>
-                <Image style={{width: 60, height: 60}} source={require('../assets/images/google-signin.png')}/>
-                <Text style={styles.signInButtonText}>Sign In with Google</Text>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={this.signIn} style={styles.googlePlusStyle}>
+                    <Image style={{width: 60, height: 60}} source={require('../assets/images/google-signin.png')}/>
+                    <Text style={styles.signInButtonText}>Sign In with Google</Text>
+                </TouchableOpacity>
             </View>
         }
     }

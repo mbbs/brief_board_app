@@ -35,7 +35,13 @@ export default class HomeScreen extends Component {
             refreshing: false
         });
         fetch("https://v6bliogsci.execute-api.us-east-1.amazonaws.com/default/brief_board_backend")
-            .then(res => res.json())
+            .then(res => {
+                if (res.ok) {
+                    return res.json()
+                } else {
+                    return Promise.resolve([]);
+                }
+            })
             .then(data => this.setState({
                 data: data,
                 refreshing: false
