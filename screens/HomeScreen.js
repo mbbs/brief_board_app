@@ -49,12 +49,11 @@ export default class HomeScreen extends Component {
     };
 
     render() {
-        const {statusBarStyle} = this.state;
+        const payments = [];
 
-        var payments = [];
-
-        this.state.data.map(d => {
+        this.state.data.map((d, index) => {
             payments.push(<TouchableOpacity style={styles.newsContainer}
+                                            key={index}
                                             onPress={() => this.handlePressButtonAsync(d.video_link)}>
                 <Text style={styles.newsSource}>CNN</Text>
                 <Text style={styles.newsTitle}>{d.title}</Text>
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
     heading: {
         fontSize: 35,
         color: '#171824',
-        fontFamily:'Verdana'
+        fontFamily: 'Verdana'
     },
     container: {
         flex: 1,
@@ -136,9 +135,7 @@ const styles = StyleSheet.create({
         lineHeight: 19,
         textAlign: 'center',
     },
-    contentContainer: {
-
-    },
+    contentContainer: {},
     imageStyle: {
         height: 250,
         width: null
