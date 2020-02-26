@@ -24,7 +24,6 @@ export default class LoginScreen extends Component {
     }
 
     componentDidMount() {
-        screenTrack("LoginScreen");
         this.loadUser();
     }
 

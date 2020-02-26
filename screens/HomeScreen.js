@@ -22,7 +22,6 @@ export default class HomeScreen extends Component {
     }
 
     componentDidMount() {
-        screenTrack("HomeScreen");
         this.onRefresh();
     }
 

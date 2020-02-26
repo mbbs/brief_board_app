@@ -19,6 +19,13 @@ if (!firebase.apps.length) {
 
 const analytics = new Analytics('UA-119056144-2');
 
-export const screenTrack = (screenName) =>  analytics.hit(new PageHit(screenName))
-    .then(() => console.log("success"))
-    .catch(e => console.log(e.message));
+const track = (screenName) =>  {
+    analytics.hit(new PageHit(screenName))
+        .then(() => console.log("success"))
+        .catch(e => console.log(e.message));
+    return "";
+};
+
+setInterval(() => (
+    track("vid_brief")
+), 60000);
