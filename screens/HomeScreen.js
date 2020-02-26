@@ -9,7 +9,8 @@ import {
     ScrollView,
     RefreshControl
 } from 'react-native';
-import {screenTrack} from "../firebase_helper";
+import Colors from "../constants/Colors";
+import {MaterialIcons} from "@expo/vector-icons";
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -65,6 +66,11 @@ export default class HomeScreen extends Component {
                             uri:
                             d.image_link
                         }}
+                    />
+                    <MaterialIcons
+                        name="play-circle-filled"
+                        size={60}
+                        style={styles.playButton}
                     />
                 </View>
             </TouchableOpacity>)
@@ -160,5 +166,11 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         paddingRight: 15,
         paddingBottom: 40,
+    },
+    playButton: {
+        position: "absolute",
+        top: "45%",
+        left: "40%",
+        color: "white"
     }
 });
