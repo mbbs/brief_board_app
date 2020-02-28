@@ -57,14 +57,14 @@ export default class HomeScreen extends Component {
             payments.push(<TouchableOpacity style={styles.newsContainer}
                                             key={index}
                                             onPress={() => this.handlePressButtonAsync(d.video_link)}>
-                <Text style={styles.newsSource}>CNN</Text>
+                <Text style={styles.newsSource}>{d.source}</Text>
                 <Text style={styles.newsTitle}>{d.title}</Text>
                 <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
                     <Image
                         style={styles.imageStyle}
                         source={{
                             uri:
-                            d.image_link
+                            d.image_url
                         }}
                     />
                     <MaterialIcons
@@ -78,7 +78,7 @@ export default class HomeScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.headingView}>
-                    <Text style={styles.heading}>vidBrief</Text>
+                    <Text style={styles.heading}>VIDBRIEF</Text>
                 </View>
                 <ScrollView
                     style={styles.scrollContainer}
@@ -87,7 +87,6 @@ export default class HomeScreen extends Component {
                                                     onRefresh={this.onRefresh}/>}>
                     {payments}
                 </ScrollView>
-
             </View>
         );
     }
@@ -112,18 +111,19 @@ const styles = StyleSheet.create({
     headingView: {
         justifyContent: 'center',
         alignItems: 'center',
-        fontSize: 35,
-        fontFamily: 'System',
+        fontSize: 65,
         marginTop: 10,
         marginBottom: 10,
+        fontFamily: 'space-mono',
         backgroundColor: '#FED321',
         paddingTop: 15,
         paddingBottom: 15
     },
     heading: {
         fontSize: 35,
+        fontWeight: 'bold',
         color: '#171824',
-        fontFamily: 'Verdana'
+        fontFamily: 'space-mono',
     },
     container: {
         flex: 1,
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         lineHeight: 19,
         textAlign: 'center',
+        fontFamily: 'space-mono',
     },
     contentContainer: {},
     imageStyle: {
@@ -148,17 +149,15 @@ const styles = StyleSheet.create({
         width: null
     },
     newsSource: {
-        fontSize: 15,
-        fontFamily: 'System',
+        fontSize: 25,
         fontWeight: 'bold',
         textAlign: 'left',
         flexWrap: 'wrap',
-        paddingBottom: 10
-
+        paddingBottom: 10,
+        fontFamily: 'space-mono'
     },
     newsTitle: {
         fontSize: 18,
-        fontFamily: 'System',
         textAlign: 'left',
         flexWrap: 'wrap'
     },
