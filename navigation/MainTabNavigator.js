@@ -6,6 +6,7 @@ import {createBottomTabNavigator} from 'react-navigation-tabs';
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
@@ -15,7 +16,9 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
-        Login: LoginScreen
+        Login: LoginScreen,
+        Feedback: FeedbackScreen
+
     },
     config
 );
@@ -53,9 +56,27 @@ LoginStack.navigationOptions = {
 
 LoginStack.path = '';
 
+
+const FeedbackStack = createStackNavigator(
+    {
+        Feedback: FeedbackScreen,
+    },
+    config
+);
+
+FeedbackStack.navigationOptions = {
+    tabBarLabel: 'Feedback',
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-user'} />
+    ),
+};
+
+FeedbackStack.path = '';
+
 const tabNavigator = createBottomTabNavigator({
     HomeStack,
-    LoginStack
+    LoginStack,
+    FeedbackStack
 });
 
 tabNavigator.path = '';
