@@ -58,6 +58,7 @@ export default class HomeScreen extends Component {
                     <TouchableOpacity style={styles.newsContainer}
                                       key={index}
                                       onPress={() => this.handlePressButtonAsync(d.video_link)}>
+                        <Text style={styles.newsSource}>{d.source}</Text>
                         <Text style={styles.newsTitle}>{d.title}</Text>
                         <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
                             <Image
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     newsContainer: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 40,
+        paddingBottom: 40
     },
     playButton: {
         position: "absolute",
