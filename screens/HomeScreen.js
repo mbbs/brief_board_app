@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontWeight: 'bold',
         color: '#171824',
-        fontFamily: 'space-mono',
+        fontFamily: 'space-mono'
     },
     container: {
         flex: 1,
