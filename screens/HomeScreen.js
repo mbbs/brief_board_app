@@ -9,7 +9,6 @@ import {
     ScrollView,
     RefreshControl
 } from 'react-native';
-import Colors from "../constants/Colors";
 import {MaterialIcons} from "@expo/vector-icons";
 
 export default class HomeScreen extends Component {
@@ -53,28 +52,28 @@ export default class HomeScreen extends Component {
     render() {
         const payments = [];
 
-        this.state.data.map((d, index) => {
-            payments.push(<TouchableOpacity style={styles.newsContainer}
-                                            key={index}
-                                            onPress={() => this.handlePressButtonAsync(d.video_link)}>
-                <Text style={styles.newsSource}>{d.source}</Text>
-                <Text style={styles.newsTitle}>{d.title}</Text>
-                <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
-                    <Image
-                        style={styles.imageStyle}
-                        source={{
-                            uri:
-                            d.image_url
-                        }}
-                    />
-                    <MaterialIcons
-                        name="play-circle-filled"
-                        size={60}
-                        style={styles.playButton}
-                    />
-                </View>
-            </TouchableOpacity>)
-        });
+        this.state.data.sort((a, b) => a.date - b.date)
+            .map((d, index) => {
+                payments.push(
+                    <TouchableOpacity style={styles.newsContainer}
+                                      key={index}
+                                      onPress={() => this.handlePressButtonAsync(d.video_link)}>
+                        <Text style={styles.newsSource}>{d.source}</Text>
+                        <Text style={styles.newsTitle}>{d.title}</Text>
+                        <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
+                            <Image
+                                style={styles.imageStyle}
+                                source={{uri: d.image_url}}
+                            />
+                            <MaterialIcons
+                                name="play-circle-filled"
+                                size={60}
+                                style={styles.playButton}
+                            />
+                        </View>
+                    </TouchableOpacity>
+                )
+            });
         return (
             <View style={styles.container}>
                 <View style={styles.headingView}>
@@ -164,7 +163,7 @@ const styles = StyleSheet.create({
     newsContainer: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 40,
+        paddingBottom: 40
     },
     playButton: {
         position: "absolute",
