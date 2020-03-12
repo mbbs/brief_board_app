@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Tab Navigation Template",
+    "name": "VidBrief",
     "slug": "brief_board",
     "privacy": "public",
     "sdkVersion": "36.0.0",
@@ -24,7 +24,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vidbrief.vidbrief",
+      "buildNumber": "1.0.0"
+
     },
     "description": ""
   }
