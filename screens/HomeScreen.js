@@ -10,6 +10,7 @@ import {
     RefreshControl
 } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
+import {trackHit} from "../firebase_helper";
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -25,7 +26,8 @@ export default class HomeScreen extends Component {
         this.onRefresh();
     }
 
-    async handlePressButtonAsync(url) {
+    async handlePressButtonAsync(source, url) {
+        trackHit(source, url);
         await WebBrowser.dismissBrowser();
         await WebBrowser.openBrowserAsync(url);
     };
@@ -57,7 +59,7 @@ export default class HomeScreen extends Component {
                 payments.push(
                     <TouchableOpacity style={styles.newsContainer}
                                       key={index}
-                                      onPress={() => this.handlePressButtonAsync(d.video_link)}>
+                                      onPress={() => this.handlePressButtonAsync(d.source, d.video_link)}>
                         <Text style={styles.newsSource}>{d.source}</Text>
                         <Text style={styles.newsTitle}>{d.title}</Text>
                         <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>

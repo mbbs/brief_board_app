@@ -1,5 +1,5 @@
 import firebase from "firebase";
-import {Analytics, PageHit} from 'expo-analytics';
+import {Analytics, PageHit, Event} from 'expo-analytics';
 
  const firebaseConfig = {
     apiKey: "AIzaSyBNm0glmh4INLffNae_uySkSpJlL7ZF9Fc",
@@ -18,6 +18,12 @@ if (!firebase.apps.length) {
 }
 
 const analytics = new Analytics('UA-43476145-2');
+
+export const trackHit = (source, videoName) => {
+    analytics.event(new Event('video_link_open', source, videoName, 1))
+        .then(() => console.log("success"))
+        .catch(e => console.log(e.message));
+};
 
 const track = (screenName) =>  {
     analytics.hit(new PageHit(screenName))
