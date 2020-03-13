@@ -6,6 +6,7 @@ import {AsyncStorage} from "react-native";
 
 const config = {
     iosClientId: '689009111160-0empa8quf6m2bm0s0006v5v6mcg431a6.apps.googleusercontent.com',
+    iosStandaloneAppClientId: '652130215638-gnb5uoci5bkuntdr1m0e1nap659pal48.apps.googleusercontent.com',
     scopes: ["profile", "email"]
 };
 
