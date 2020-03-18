@@ -37,7 +37,7 @@ export default class HomeScreen extends Component {
             data: this.state.data,
             refreshing: false
         });
-        fetch("https://afspqtmfea.execute-api.us-east-2.amazonaws.com/default/brief_board_backend")
+        fetch("https://data.apiv1.vidbrief.com/brief_board_backend")
             .then(res => {
                 if (res.ok) {
                     return res.json()
