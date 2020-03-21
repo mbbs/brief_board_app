@@ -54,7 +54,7 @@ export default class HomeScreen extends Component {
     render() {
         const payments = [];
 
-        this.state.data.sort((a, b) => a.date - b.date)
+        this.state.data
             .map((d, index) => {
                 payments.push(
                     <TouchableOpacity style={styles.newsContainer}
