@@ -35,7 +35,8 @@
     "xml2js": "^0.4.23",
     "firebase": "^7.9.1",
     "expo-google-app-auth": "^8.0.1",
-    "react-native-gesture-handler": "^1.6.0"
+    "react-native-gesture-handler": "^1.6.0",
+    "expo-apple-authentication": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
