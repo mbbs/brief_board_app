@@ -121,7 +121,7 @@ export default class LoginScreen extends Component {
             const providerData = firebaseUser.providerData;
             for (let i = 0; i < providerData.length; i++) {
                 if (providerData[i].providerId === providerId && 
-                    providerData[i].uid === user.user.id) {
+                    providerData[i].uid === userId) {
                     // We don't need to reauth the Firebase connection.
                     return true;
                 }
