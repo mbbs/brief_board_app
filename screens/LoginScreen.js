@@ -1,8 +1,10 @@
 import * as Google from 'expo-google-app-auth';
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity, Alert} from 'react-native';
 import firebase from "firebase";
 import {AsyncStorage} from "react-native";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { FontAwesome } from '@expo/vector-icons';
 
 const config = {
     iosClientId: '689009111160-0empa8quf6m2bm0s0006v5v6mcg431a6.apps.googleusercontent.com',
@@ -12,6 +14,7 @@ const config = {
 
 const userNameKey = '@VidBrief:userName';
 const photoUrlKey = '@VidBrief:photoUrl';
+const appleProvider = new firebase.auth.OAuthProvider('apple.com');
 
 export default class LoginScreen extends Component {
     constructor(props) {
@@ -49,7 +52,9 @@ export default class LoginScreen extends Component {
     stateSetHelper = async (name, photoUrl) => {
         try {
             await AsyncStorage.setItem(userNameKey, name);
-            await AsyncStorage.setItem(photoUrlKey, photoUrl);
+            if (photoUrl) {
+                await AsyncStorage.setItem(photoUrlKey, photoUrl);
+            }
             await this.setState({
                 isSignedIn: true,
                 name: name,
@@ -68,10 +73,9 @@ export default class LoginScreen extends Component {
         const unsubscribe = firebase.auth().onAuthStateChanged(function (firebaseUser) {
             unsubscribe();
             // Check if we are already signed-in Firebase with the correct user.
-            if (!that.isUserEqual(googleUser, firebaseUser)) {
+            if (!that.isUserEqual(googleUser, firebaseUser, firebase.auth.GoogleAuthProvider.PROVIDER_ID, googleUser.user.id)) {
                 // Build Firebase credential with the Google ID token.
-                const credential = firebase.auth.GoogleAuthProvider.credential(
-                    googleUser.idToken);
+                const credential = firebase.auth.GoogleAuthProvider.credential(googleUser.idToken);
 
                 // Sign in with credential from the Google user.
                 firebase.auth().signInWithCredential(credential)
@@ -86,12 +90,38 @@ export default class LoginScreen extends Component {
         });
     };
 
-    isUserEqual = (googleUser, firebaseUser) => {
+
+    onSignInApple = (appleUser) => {
+        console.log('Apple Auth Response', appleUser);
+        // We need to register an Observer on Firebase Auth to make sure auth is initialized.
+        const that = this;
+        const unsubscribe = firebase.auth().onAuthStateChanged(function (firebaseUser) {
+            unsubscribe();
+            // Check if we are already signed-in Firebase with the correct user.
+            if (!that.isUserEqual(appleUser, firebaseUser, "apple.com", appleUser.user)) {
+                const authCredential = appleProvider.credential({
+                    idToken: appleUser.identityToken
+                });
+                
+                // Sign in with credential from the Google user.
+                firebase.auth().signInWithCredential(authCredential)
+                    .then(() => that.stateSetHelper(appleUser.fullName.givenName +  " " + appleUser.fullName.familyName,undefined))
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            } else {
+                that.stateSetHelper(appleUser.fullName.givenName +  " " + appleUser.fullName.familyName, undefined);
+                console.log('User already signed-in Firebase.');
+            }
+        });
+    };
+
+    isUserEqual = (user, firebaseUser, providerId, userId) => {
         if (firebaseUser) {
             const providerData = firebaseUser.providerData;
             for (let i = 0; i < providerData.length; i++) {
-                if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
-                    providerData[i].uid === googleUser.user.id) {
+                if (providerData[i].providerId === providerId && 
+                    providerData[i].uid === userId) {
                     // We don't need to reauth the Firebase connection.
                     return true;
                 }
@@ -109,14 +139,33 @@ export default class LoginScreen extends Component {
         }
     };
 
+    signInApple = async () => {
+        try {
+            const credential = await AppleAuthentication.signInAsync({
+            requestedScopes: [
+              AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+              AppleAuthentication.AppleAuthenticationScope.EMAIL,
+            ],
+          });
+          this.onSignInApple(credential);
+        } catch (e) {
+            return {error: true};
+        }
+    };
+
     render() {
         if (this.state.isSignedIn) {
             return <View style={styles.container}>
                 <View style={styles.imageView}>
-                    <Image
-                        style={{width: 200, height: 200, borderRadius: 100}}
-                        source={{uri: this.state.photoUrl}}
-                    />
+                   {  
+                        this.state.photoUrl && <Image
+                            style={{width: 200, height: 200, borderRadius: 100}}
+                            source={{uri: this.state.photoUrl}}
+                        /> 
+                    }
+                    {  
+                        !this.state.photoUrl && <FontAwesome name={"user-circle-o"} size={150} />
+                    }
                 </View>
                 <View style={styles.welcomeTextView}>
                     <Text style={styles.welcomeText}>
@@ -130,7 +179,9 @@ export default class LoginScreen extends Component {
                 </TouchableOpacity>
             </View>
         } else {
-            return <View style={styles.signInView}>
+        
+           return <View style={styles.signInView}>
+ 
                 <Text style={styles.signInWithHeading}>Sign In</Text>
                 <View
                     style={{
@@ -140,6 +191,12 @@ export default class LoginScreen extends Component {
                         margin: 20,
                     }}
                 />
+                <AppleAuthentication.AppleAuthenticationButton
+                    buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                    buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+                    cornerRadius={5}
+                    style={{ width: "80%", height: 60, marginBottom: 15 }}
+                    onPress={this.signInApple}/>
                 <TouchableOpacity onPress={this.signIn} style={styles.googlePlusStyle}>
                     <Image style={{width: 60, height: 60}} source={require('../assets/images/google-signin.png')}/>
                     <Text style={styles.signInButtonText}>Sign In with Google</Text>
