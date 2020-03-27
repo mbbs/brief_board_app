@@ -7,8 +7,8 @@ import {
 
 import {connect} from "react-redux";
 import {sourceDispatch} from "../actions/actions";
+import api from "../api/api";
 
-const staticSourceList = ["Bloomberg", "CNN", "CNBC", "The Street", "Reuters"];
 export const sourceListStr = "sourceListStr1";
 
 export async function getSources() {
@@ -19,7 +19,20 @@ export async function getSources() {
 class SourcesSelect extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            staticSourceList: [],
+            sourceListLoaded: false
+        };
+        this.bootstrap();
     }
+
+    bootstrap = async () => {
+        const newSources = await api.getNewsSources();
+        this.setState({
+            staticSourceList: newSources,
+            sourceListLoaded: true
+        });
+    };
 
     toggle = (sourcesList, source) => {
         const {dispatch} = this.props;
@@ -32,7 +45,7 @@ class SourcesSelect extends Component {
 
     render() {
         const {sourcesList} = this.props;
-        const sourceSettingsView = staticSourceList.map((source, index) =>
+        const sourceSettingsView = this.state.staticSourceList.map((source, index) =>
             <View key={index}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
 
@@ -58,8 +71,19 @@ class SourcesSelect extends Component {
                 />
             </View>);
         return <View style={styles.container}>
-            <ScrollView
-                style={styles.scrollContainer}>{sourceSettingsView}</ScrollView>
+            {
+                !this.state.sourceListLoaded &&
+                <View style={styles.scrollContainer}>
+                    <ActivityIndicator size="large" color="#000"/>
+                    <Text style={styles.loadingText}>Loading</Text>
+                </View>
+            }
+            {
+                this.state.sourceListLoaded &&
+                <ScrollView
+                    style={styles.scrollContainer}>{sourceSettingsView}</ScrollView>
+
+            }
         </View>;
     }
 }
@@ -71,7 +95,7 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flex: 1,
         backgroundColor: '#fff',
-        paddingTop: 20
+        paddingTop: 20,
     },
     newsTitle: {
         width: "80%",
@@ -87,7 +111,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         marginRight: 20,
         transform: [{scaleX: 1.1}, {scaleY: 1.1}]
-    }
+    },
 });
 
 const mapStateToProps = state => {
