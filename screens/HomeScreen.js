@@ -7,25 +7,28 @@ import {
     TouchableOpacity,
     View,
     ScrollView,
+    Alert,
     RefreshControl
 } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
 import {trackHit} from "../firebase_helper";
 import {getSources} from "./SettingsScreen";
+import {connect} from "react-redux";
+import {fetchData} from "../actions/actions";
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            data: [],
-            refreshing: true
-        };
     }
 
     componentDidMount() {
         this.onRefresh();
     }
+
+    onRefresh = () => {
+        const {dispatch} = this.props;
+        fetchData(dispatch);
+    };
 
     async handlePressButtonAsync(source, url) {
         trackHit(source, url);
@@ -33,29 +36,10 @@ export default class HomeScreen extends Component {
         await WebBrowser.openBrowserAsync(url);
     };
 
-    onRefresh = () => {
-        this.setState({
-            data: this.state.data,
-            refreshing: false
-        });
-        fetch("https://data.apiv1.vidbrief.com/brief_board_backend")
-            .then(res => {
-                if (res.ok) {
-                    return res.json()
-                } else {
-                    return Promise.resolve([]);
-                }
-            })
-            .then(data => this.setState({
-                data: data,
-                refreshing: false
-            }));
-    };
-
     render() {
+        const {refreshingData, newsArticles} = this.props;
         const payments = [];
-
-        this.state.data
+        newsArticles
             .map((d, index) => {
                 payments.push(
                     <TouchableOpacity style={styles.newsContainer}
@@ -90,17 +74,30 @@ export default class HomeScreen extends Component {
                 <View style={styles.headingView}>
                     <Text style={styles.heading}>VIDBRIEF</Text>
                 </View>
-                <ScrollView
-                    style={styles.scrollContainer}
-                    contentContainerStyle={styles.contentContainer}
-                    refreshControl={<RefreshControl refreshing={this.state.refreshing}
-                                                    onRefresh={this.onRefresh}/>}>
-                    {payments}
-                </ScrollView>
+                {
+                    newsArticles.length === 0 &&
+                    <View style={styles.scrollContainer}>
+                        <Text style={styles.emptySourcesText}>
+                            To view Video Snacks select sources from settings tab.
+                        </Text>
+                    </View>
+
+                }
+                {
+                    newsArticles.length !== 0 &&
+                    <ScrollView
+                        style={styles.scrollContainer}
+                        contentContainerStyle={styles.contentContainer}
+                        refreshControl={<RefreshControl refreshing={refreshingData}
+                                                        onRefresh={this.onRefresh}/>}>
+                        {payments}
+                    </ScrollView>
+                }
             </View>
         );
     }
 }
+
 HomeScreen.navigationOptions = {
     header: null,
 };
@@ -182,5 +179,27 @@ const styles = StyleSheet.create({
         top: "45%",
         left: "40%",
         color: "white"
+    },
+    emptySourcesText: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 20,
+        flexWrap: 'wrap',
+        fontFamily: 'System'
     }
 });
+
+const mapStateToProps = state => {
+    const {reducer} = state;
+    const {refreshingData, newsArticles, sourcesList} = reducer || {
+        refreshingData: false,
+        newsArticles: []
+    };
+
+    return {
+        refreshingData,
+        newsArticles
+    };
+};
+
+export default connect(mapStateToProps)(HomeScreen);

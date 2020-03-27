@@ -4,9 +4,11 @@ import {
     Alert,
     Switch, ScrollView
 } from 'react-native';
-import {AsyncStorage} from "react-native";
 
-const sourceList = ["Bloomberg", "CNN", "CNBC", "The Street", "Reuters"];
+import {connect} from "react-redux";
+import {sourceDispatch} from "../actions/actions";
+
+const staticSourceList = ["Bloomberg", "CNN", "CNBC", "The Street", "Reuters"];
 export const sourceListStr = "sourceListStr1";
 
 export async function getSources() {
@@ -14,41 +16,23 @@ export async function getSources() {
     return sourceListJson ? JSON.parse(sourceListJson) : [];
 }
 
-export default class Setting extends Component {
+class Setting extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            sources: []
-        };
     }
 
-    removeSource = async (source) => {
-        const sources = this.state.sources.filter(x => x !== source);
-        await AsyncStorage.setItem(sourceListStr, JSON.stringify(sources.filter(x => x !== source)));
-        await this.setState({
-            sources: await getSources()
-        });
-    };
-
-    addSource = async (source) => {
-        const sources = [...this.state.sources, source];
-        await AsyncStorage.setItem(sourceListStr, JSON.stringify(sources));
-        await this.setState({
-            sources: await getSources()
-        });
-    };
-
-
-    toggle = async (source) => {
-        if (this.state.sources.includes(source)) {
-            await this.removeSource(source);
+    toggle = (sourcesList, source) => {
+        const {dispatch} = this.props;
+        if (sourcesList.includes(source)) {
+            sourceDispatch(dispatch, sourcesList.filter(x => x !== source));
         } else {
-            await this.addSource(source);
+            sourceDispatch(dispatch, [...sourcesList, source]);
         }
     };
 
     render() {
-        const sourceSettingsView = sourceList.map(source =>
+        const {sourcesList} = this.props;
+        const sourceSettingsView = staticSourceList.map(source =>
             <View>
                 <View style={{flex: 1, flexDirection: 'row'}}>
 
@@ -58,8 +42,8 @@ export default class Setting extends Component {
                     <View style={{flex: .5}}>
                         <Switch
                             style={styles.toggle}
-                            onValueChange={() => this.toggle(source)}
-                            value={this.state.sources.includes(source)}/>
+                            onValueChange={() => this.toggle(sourcesList, source)}
+                            value={sourcesList.includes(source)}/>
                     </View>
                 </View>
                 <View
@@ -100,8 +84,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontFamily: 'space-mono',
         backgroundColor: '#FED321',
-        paddingTop: 15,
-        paddingBottom: 15
+        paddingTop: 10,
+        paddingBottom: 10
     },
     heading: {
         fontSize: 35,
@@ -126,16 +110,30 @@ const styles = StyleSheet.create({
     },
     newsTitle: {
         width: "80%",
-        fontSize: 30,
+        fontSize: 28,
         textAlign: 'left',
         flexWrap: 'wrap',
-        fontFamily: 'System'
+        fontFamily: 'System',
+        marginLeft: 10
     },
     toggle: {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         alignSelf: 'flex-end',
         marginRight: 20,
-        transform: [{scaleX: 1.2}, {scaleY: 1.2}]
+        transform: [{scaleX: 1.1}, {scaleY: 1.1}]
     }
 });
+
+const mapStateToProps = state => {
+    const {reducer} = state;
+    const {refreshingData, newsArticles, sourcesList} = reducer || {
+        sourcesList: []
+    };
+
+    return {
+        sourcesList
+    };
+};
+
+export default connect(mapStateToProps)(Setting);
