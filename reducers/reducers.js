@@ -25,14 +25,6 @@ const reducer = (state = {refreshingData: false, newsArticles: [], sourcesList: 
     }
 };
 
-export const sourceHandler = async (source) => {
-    const sources = [...this.state.sources, source];
-    await AsyncStorage.setItem(sourceListStr, JSON.stringify(sources));
-    await this.setState({
-        sources: await getSources()
-    });
-};
-
 const rootReducer = combineReducers({
     reducer
 });

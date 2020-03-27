@@ -18,10 +18,8 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
-        // Login: LoginScreen,
-        Feedback: FeedbackScreen,
-        Settings: SettingsScreen
-
+        Settings: SettingsScreen,
+        Feeback: FeedbackScreen
     },
     config
 );
@@ -44,37 +42,21 @@ HomeStack.path = '';
 
 
 const LoginStack = createStackNavigator(
-  {
-    Login: LoginScreen,
-  },
-  config
-);
-
-LoginStack.navigationOptions = {
-  tabBarLabel: 'Profile',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-user'} />
-  ),
-};
-
-LoginStack.path = '';
-
-
-const FeedbackStack = createStackNavigator(
     {
-        Feedback: FeedbackScreen,
+        Login: LoginScreen,
     },
     config
 );
 
-FeedbackStack.navigationOptions = {
-    tabBarLabel: 'Feedback',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-user'} />
+LoginStack.navigationOptions = {
+    tabBarLabel: 'Profile',
+    tabBarIcon: ({focused}) => (
+        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-person' : 'md-user'}/>
     ),
 };
 
-FeedbackStack.path = '';
+LoginStack.path = '';
+
 
 const SettingsStack = createStackNavigator(
     {
@@ -85,18 +67,34 @@ const SettingsStack = createStackNavigator(
 
 SettingsStack.navigationOptions = {
     tabBarLabel: 'Settings',
-    tabBarIcon: ({ focused }) => (
-        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-user'} />
+    tabBarIcon: ({focused}) => (
+        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}/>
     ),
 };
 
 SettingsStack.path = '';
 
+const FeedbackStack = createStackNavigator(
+    {
+        Feedback: FeedbackScreen,
+    },
+    config
+);
+
+FeedbackStack.navigationOptions = {
+    tabBarLabel: 'Feedback',
+    tabBarIcon: ({focused}) => (
+        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-user'}/>
+    ),
+};
+
+FeedbackStack.path = '';
+
 const tabNavigator = createBottomTabNavigator({
     HomeStack,
-    // LoginStack,
+    SettingsStack,
     FeedbackStack,
-    SettingsStack
+    // LoginStack,
 });
 
 tabNavigator.path = '';

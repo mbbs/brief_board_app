@@ -7,12 +7,10 @@ import {
     TouchableOpacity,
     View,
     ScrollView,
-    Alert,
     RefreshControl
 } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
 import {trackHit} from "../firebase_helper";
-import {getSources} from "./SettingsScreen";
 import {connect} from "react-redux";
 import {fetchData} from "../actions/actions";
 
@@ -23,6 +21,12 @@ class HomeScreen extends Component {
 
     componentDidMount() {
         this.onRefresh();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.newsArticles.length === 0) {
+            this.props.navigation.navigate("SelectSource");
+        }
     }
 
     onRefresh = () => {
@@ -74,25 +78,12 @@ class HomeScreen extends Component {
                 <View style={styles.headingView}>
                     <Text style={styles.heading}>VIDBRIEF</Text>
                 </View>
-                {
-                    newsArticles.length === 0 &&
-                    <View style={styles.scrollContainer}>
-                        <Text style={styles.emptySourcesText}>
-                            To view Video Snacks select sources from settings tab.
-                        </Text>
-                    </View>
-
-                }
-                {
-                    newsArticles.length !== 0 &&
-                    <ScrollView
-                        style={styles.scrollContainer}
-                        contentContainerStyle={styles.contentContainer}
-                        refreshControl={<RefreshControl refreshing={refreshingData}
-                                                        onRefresh={this.onRefresh}/>}>
-                        {payments}
-                    </ScrollView>
-                }
+                <ScrollView
+                    style={styles.scrollContainer}
+                    refreshControl={<RefreshControl refreshing={refreshingData}
+                                                    onRefresh={this.onRefresh}/>}>
+                    {payments}
+                </ScrollView>
             </View>
         );
     }
@@ -101,18 +92,6 @@ class HomeScreen extends Component {
 HomeScreen.navigationOptions = {
     header: null,
 };
-
-function handleLearnMorePress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/development-mode/'
-    );
-}
-
-function handleHelpPress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-    );
-}
 
 const styles = StyleSheet.create({
     headingView: {
@@ -132,6 +111,15 @@ const styles = StyleSheet.create({
         color: '#171824',
         fontFamily: 'space-mono',
     },
+    selectSourcesHeading: {
+        fontSize: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        color: '#171824',
+        fontFamily: 'System',
+        marginBottom: 10
+    },
     container: {
         flex: 1,
         backgroundColor: '#FED321',
@@ -142,15 +130,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingTop: 20
     },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center',
-        fontFamily: 'space-mono',
-    },
-    contentContainer: {},
     imageStyle: {
         height: 250,
         width: null
@@ -186,7 +165,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         flexWrap: 'wrap',
         fontFamily: 'System'
-    }
+    },
 });
 
 const mapStateToProps = state => {
