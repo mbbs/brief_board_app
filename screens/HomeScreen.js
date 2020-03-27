@@ -60,7 +60,6 @@ export default class HomeScreen extends Component {
                     <TouchableOpacity style={styles.newsContainer}
                                       key={index}
                                       onPress={() => this.handlePressButtonAsync(d.source, d.video_link)}>
-                        <Text style={styles.newsSource}>{d.source}</Text>
                         <Text style={styles.newsTitle}>{d.title}</Text>
                         <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
                             <Image
@@ -73,6 +72,15 @@ export default class HomeScreen extends Component {
                                 style={styles.playButton}
                             />
                         </View>
+                        <View
+                    style={{
+                        borderWidth: 1,
+                        borderColor: '#ededed',
+                        width: "100%",
+                        marginTop: 20
+                        
+                    }}
+                />
                     </TouchableOpacity>
                 )
             });
@@ -158,14 +166,15 @@ const styles = StyleSheet.create({
         fontFamily: 'space-mono'
     },
     newsTitle: {
-        fontSize: 18,
+        fontSize: 20,
         textAlign: 'left',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        fontFamily: 'System'
     },
     newsContainer: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 40
+        marginBottom: 20
     },
     playButton: {
         position: "absolute",

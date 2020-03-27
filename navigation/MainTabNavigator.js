@@ -16,7 +16,7 @@ const config = Platform.select({
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
-        Login: LoginScreen,
+        // Login: LoginScreen,
         Feedback: FeedbackScreen
 
     },
@@ -75,7 +75,7 @@ FeedbackStack.path = '';
 
 const tabNavigator = createBottomTabNavigator({
     HomeStack,
-    LoginStack,
+    // LoginStack,
     FeedbackStack
 });
 
