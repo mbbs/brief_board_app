@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
 import {trackHit} from "../firebase_helper";
+import {getSources} from "./SettingsScreen";
 
 export default class HomeScreen extends Component {
     constructor(props) {
@@ -73,14 +74,14 @@ export default class HomeScreen extends Component {
                             />
                         </View>
                         <View
-                    style={{
-                        borderWidth: 1,
-                        borderColor: '#ededed',
-                        width: "100%",
-                        marginTop: 20
-                        
-                    }}
-                />
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#ededed',
+                                width: "100%",
+                                marginTop: 20
+
+                            }}
+                        />
                     </TouchableOpacity>
                 )
             });

@@ -7,17 +7,20 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const config = Platform.select({
     web: {headerMode: 'screen'},
     default: {},
+    headerMode: 'none'
 });
 
 const HomeStack = createStackNavigator(
     {
         Home: HomeScreen,
         // Login: LoginScreen,
-        Feedback: FeedbackScreen
+        Feedback: FeedbackScreen,
+        Settings: SettingsScreen
 
     },
     config
@@ -73,10 +76,27 @@ FeedbackStack.navigationOptions = {
 
 FeedbackStack.path = '';
 
+const SettingsStack = createStackNavigator(
+    {
+        Settings: SettingsScreen,
+    },
+    {headerMode: 'none'}
+);
+
+SettingsStack.navigationOptions = {
+    tabBarLabel: 'Settings',
+    tabBarIcon: ({ focused }) => (
+        <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-user'} />
+    ),
+};
+
+SettingsStack.path = '';
+
 const tabNavigator = createBottomTabNavigator({
     HomeStack,
     // LoginStack,
-    FeedbackStack
+    FeedbackStack,
+    SettingsStack
 });
 
 tabNavigator.path = '';
