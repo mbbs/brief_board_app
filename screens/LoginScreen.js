@@ -5,6 +5,7 @@ import firebase from "firebase";
 import {AsyncStorage} from "react-native";
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { FontAwesome } from '@expo/vector-icons';
+import * as Crypto from "expo-crypto";
 
 const config = {
     iosClientId: '689009111160-0empa8quf6m2bm0s0006v5v6mcg431a6.apps.googleusercontent.com',

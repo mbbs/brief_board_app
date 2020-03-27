@@ -11,20 +11,28 @@ import {
 } from 'react-native';
 import {MaterialIcons} from "@expo/vector-icons";
 import {trackHit} from "../firebase_helper";
+import {connect} from "react-redux";
+import {fetchData} from "../actions/actions";
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            data: [],
-            refreshing: true
-        };
     }
 
     componentDidMount() {
         this.onRefresh();
     }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.newsArticles.length === 0) {
+            this.props.navigation.navigate("SelectSource");
+        }
+    }
+
+    onRefresh = () => {
+        const {dispatch} = this.props;
+        fetchData(dispatch);
+    };
 
     async handlePressButtonAsync(source, url) {
         trackHit(source, url);
@@ -32,35 +40,15 @@ export default class HomeScreen extends Component {
         await WebBrowser.openBrowserAsync(url);
     };
 
-    onRefresh = () => {
-        this.setState({
-            data: this.state.data,
-            refreshing: false
-        });
-        fetch("https://data.apiv1.vidbrief.com/brief_board_backend")
-            .then(res => {
-                if (res.ok) {
-                    return res.json()
-                } else {
-                    return Promise.resolve([]);
-                }
-            })
-            .then(data => this.setState({
-                data: data,
-                refreshing: false
-            }));
-    };
-
     render() {
+        const {refreshingData, newsArticles} = this.props;
         const payments = [];
-
-        this.state.data
+        newsArticles
             .map((d, index) => {
                 payments.push(
                     <TouchableOpacity style={styles.newsContainer}
                                       key={index}
                                       onPress={() => this.handlePressButtonAsync(d.source, d.video_link)}>
-                        <Text style={styles.newsSource}>{d.source}</Text>
                         <Text style={styles.newsTitle}>{d.title}</Text>
                         <View style={{flex: 1, flexDirection: 'column', paddingTop: 20}}>
                             <Image
@@ -73,6 +61,15 @@ export default class HomeScreen extends Component {
                                 style={styles.playButton}
                             />
                         </View>
+                        <View
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#ededed',
+                                width: "100%",
+                                marginTop: 20
+
+                            }}
+                        />
                     </TouchableOpacity>
                 )
             });
@@ -83,8 +80,7 @@ export default class HomeScreen extends Component {
                 </View>
                 <ScrollView
                     style={styles.scrollContainer}
-                    contentContainerStyle={styles.contentContainer}
-                    refreshControl={<RefreshControl refreshing={this.state.refreshing}
+                    refreshControl={<RefreshControl refreshing={refreshingData}
                                                     onRefresh={this.onRefresh}/>}>
                     {payments}
                 </ScrollView>
@@ -92,21 +88,10 @@ export default class HomeScreen extends Component {
         );
     }
 }
+
 HomeScreen.navigationOptions = {
     header: null,
 };
-
-function handleLearnMorePress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/development-mode/'
-    );
-}
-
-function handleHelpPress() {
-    WebBrowser.openBrowserAsync(
-        'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-    );
-}
 
 const styles = StyleSheet.create({
     headingView: {
@@ -126,6 +111,15 @@ const styles = StyleSheet.create({
         color: '#171824',
         fontFamily: 'space-mono',
     },
+    selectSourcesHeading: {
+        fontSize: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        color: '#171824',
+        fontFamily: 'System',
+        marginBottom: 10
+    },
     container: {
         flex: 1,
         backgroundColor: '#FED321',
@@ -136,15 +130,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingTop: 20
     },
-    developmentModeText: {
-        marginBottom: 20,
-        color: 'rgba(0,0,0,0)',
-        fontSize: 14,
-        lineHeight: 19,
-        textAlign: 'center',
-        fontFamily: 'space-mono',
-    },
-    contentContainer: {},
     imageStyle: {
         height: 250,
         width: null
@@ -158,19 +143,42 @@ const styles = StyleSheet.create({
         fontFamily: 'space-mono'
     },
     newsTitle: {
-        fontSize: 18,
+        fontSize: 20,
         textAlign: 'left',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        fontFamily: 'System'
     },
     newsContainer: {
         paddingLeft: 15,
         paddingRight: 15,
-        paddingBottom: 40
+        marginBottom: 20
     },
     playButton: {
         position: "absolute",
         top: "45%",
         left: "40%",
         color: "white"
-    }
+    },
+    emptySourcesText: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: 20,
+        flexWrap: 'wrap',
+        fontFamily: 'System'
+    },
 });
+
+const mapStateToProps = state => {
+    const {reducer} = state;
+    const {refreshingData, newsArticles, sourcesList} = reducer || {
+        refreshingData: false,
+        newsArticles: []
+    };
+
+    return {
+        refreshingData,
+        newsArticles
+    };
+};
+
+export default connect(mapStateToProps)(HomeScreen);
